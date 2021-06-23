@@ -50,7 +50,7 @@ $(LIBBPF_OBJ): $(LIBBPF_SRC) $(LIBBPF_HEADER) $(LIBBPF_SRC_DIR)/Makefile | $(OUT
 		install
 
 # build BPF code
-$(BPFCODE): %.o: %.c | $(OUTPUT)
+$(BPFCODE): %.o: %.c | $(LIBBPF_OBJ) $(OUTPUT)
 	clang -target bpf $(INCLUDES) $(CLANG_BPF_SYS_INCLUDES) -c $< -o $@
 
 # build exec
