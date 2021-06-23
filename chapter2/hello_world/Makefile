@@ -1,8 +1,9 @@
 CLANG := clang
 
 OUTPUT := .output
-EXEC := monitor-exec
-BPFCODE := bpf_program.o
+BPFTOOL := $(abspath ../../tools/bpftool)
+
+APP := hello_world
 
 # Use our own libbpf API headers and Linux UAPI headers distributed with
 # libbpf to avoid dependency on system-wide headers, which could be missing or
@@ -33,10 +34,10 @@ CLANG_BPF_SYS_INCLUDES = $(shell $(CLANG) -v -E - </dev/null 2>&1 \
 			 | sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }')
 
 .PHONY: all
-all: $(BPFCODE) $(EXEC)
+all: $(APP)
 
 $(OUTPUT) $(OUTPUT)/libbpf:
-	@mkdir -p $@
+	mkdir -p $@
 
 # build libbpf
 LIBBPF_OBJ := $(abspath $(OUTPUT)/libbpf.a)
@@ -50,13 +51,23 @@ $(LIBBPF_OBJ): $(LIBBPF_SRC) $(LIBBPF_HEADER) $(LIBBPF_SRC_DIR)/Makefile | $(OUT
 		install
 
 # build BPF code
-$(BPFCODE): %.o: %.c | $(LIBBPF_OBJ) $(OUTPUT)
+$(OUTPUT)/%.bpf.o: %.bpf.c | $(LIBBPF_OBJ) $(OUTPUT)
 	clang -target bpf $(INCLUDES) $(CLANG_BPF_SYS_INCLUDES) -c $< -o $@
 
-# build exec
-$(EXEC): loader.c $(LIBBPF_OBJ)
-	$(CC) $(INCLUDES) $^ -o $@
+# build user-space code
+$(OUTPUT)/%.skel.h: $(OUTPUT)/%.bpf.o | $(OUTPUT)
+	$(BPFTOOL) gen skeleton $< > $@
+
+$(OUTPUT)/%.o: %.c $(OUTPUT)/%.skel.h | $(OUTPUT)
+	$(CC) $(INCLUDES) -c $< -o $@
+
+$(APP): %: $(OUTPUT)/%.o $(LIBBPF_OBJ) | $(OUTPUT)
+	$(CC) $^ -lelf -lz -o $@
 
 .PHONY: clean
 clean:
 	@rm -rf $(OUTPUT)
+
+.DELETE_ON_ERROR:
+
+.SECONDARY:

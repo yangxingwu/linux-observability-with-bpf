@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "bpf_load.h"
+#include "hello_world.skel.h"
 
 int main(int argc, char **argv)
 {
