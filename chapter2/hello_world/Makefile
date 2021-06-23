@@ -3,7 +3,7 @@ CLANG := clang
 OUTPUT := .output
 BPFTOOL := $(abspath ../../tools/bpftool)
 
-APP := hello_world
+APP := minimal
 
 # Use our own libbpf API headers and Linux UAPI headers distributed with
 # libbpf to avoid dependency on system-wide headers, which could be missing or
