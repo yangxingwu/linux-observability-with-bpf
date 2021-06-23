@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "hello_world.skel.h"
+#include "minimal.skel.h"
 
 int main(int argc, char **argv)
 {

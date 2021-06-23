@@ -52,7 +52,7 @@ $(LIBBPF_OBJ): $(LIBBPF_SRC) $(LIBBPF_HEADER) $(LIBBPF_SRC_DIR)/Makefile | $(OUT
 
 # build BPF code
 $(OUTPUT)/%.bpf.o: %.bpf.c | $(LIBBPF_OBJ) $(OUTPUT)
-	clang -target bpf $(INCLUDES) $(CLANG_BPF_SYS_INCLUDES) -c $< -o $@
+	clang -g -O2 -target bpf $(INCLUDES) $(CLANG_BPF_SYS_INCLUDES) -c $< -o $@
 
 # build user-space code
 $(OUTPUT)/%.skel.h: $(OUTPUT)/%.bpf.o | $(OUTPUT)
