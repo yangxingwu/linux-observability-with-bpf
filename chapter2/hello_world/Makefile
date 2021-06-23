@@ -66,7 +66,7 @@ $(APP): %: $(OUTPUT)/%.o $(LIBBPF_OBJ) | $(OUTPUT)
 
 .PHONY: clean
 clean:
-	@rm -rf $(OUTPUT)
+	@rm -rf $(OUTPUT) $(APP)
 
 .DELETE_ON_ERROR:
 
