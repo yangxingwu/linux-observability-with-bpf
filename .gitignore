@@ -1,4 +1,4 @@
 *.o
 .cache
-.output
+build_output
 compile_commands.json

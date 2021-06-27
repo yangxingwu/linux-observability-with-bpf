@@ -1,6 +1,6 @@
 CLANG := clang
 
-OUTPUT := .output
+OUTPUT := build_output
 BPFTOOL := $(abspath ../../tools/bpftool)
 
 APP := minimal
